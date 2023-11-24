@@ -61,6 +61,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class")
+    implementation("com.google.accompanist:accompanist-webview:0.30.1")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
