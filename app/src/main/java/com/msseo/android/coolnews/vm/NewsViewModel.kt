@@ -26,10 +26,10 @@ private const val TAG = "NewsViewModel"
 class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
     private val localRepository: NewsLocalRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private val _newsHeadLines: MutableStateFlow<List<News>> = MutableStateFlow(emptyList())
-    val newsHeadLines: StateFlow<List<News>> = _newsHeadLines.asStateFlow()
+    private val _newsHeadLines: MutableStateFlow<NewsResult<List<News>>> = MutableStateFlow(NewsResult.Loading)
+    val newsHeadLines: StateFlow<NewsResult<List<News>>> = _newsHeadLines.asStateFlow()
 
     private val localNews: StateFlow<List<News>> =
         localRepository.localNews
@@ -46,20 +46,20 @@ class NewsViewModel @Inject constructor(
     fun queryHeadline() {
         viewModelScope.launch {
             newsRepository.queryHeadline().collect { result ->
-                when(result) {
+                when (result) {
                     is NewsResult.Success -> {
-                        _newsHeadLines.emit(result.data)
+                        _newsHeadLines.emit(NewsResult.Success(result.data))
 
                         // Update local news.
                         localRepository.updateLocalNews(result.data)
                     }
                     is NewsResult.Error -> {
-                        Log.e(TAG, "Error during query. ${result.exception}")
-                        if(localNews.value.isNotEmpty()) {
-                            _newsHeadLines.emit(localNews.value)
+                        Log.e(TAG, "Error during query. ${result.exception}/${result.message}")
+                        if (localNews.value.isNotEmpty()) {
+                            _newsHeadLines.emit(NewsResult.Success(localNews.value))
                         } else {
                             // No local news!
-                            // TODO - what to do?
+                            _newsHeadLines.emit(NewsResult.Error(message = "Fail to get news."))
                         }
                     }
                     else -> throw IllegalStateException("This should not be happen.")
@@ -76,14 +76,18 @@ class NewsViewModel @Inject constructor(
         )
 
         // Update visited state.
-        _newsHeadLines.update { newsList ->
-            newsList.map { oldNews ->
-                if(oldNews.url == news.url) {
-                    oldNews.copy(hasVisited = true)
-                } else {
-                    oldNews
-                }
-            }
+        val newsResult = _newsHeadLines.value
+        if (newsResult is NewsResult.Success) {
+            _newsHeadLines.value =
+                NewsResult.Success(
+                    newsResult.data.map { oldNews ->
+                        if (oldNews.url == news.url) {
+                            oldNews.copy(hasVisited = true)
+                        } else {
+                            oldNews
+                        }
+                    }
+                )
         }
     }
 }
