@@ -6,12 +6,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +37,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsScreen(
+    windowWidthSizeClass: WindowWidthSizeClass,
     viewModel: NewsViewModel = hiltViewModel()
 ) {
     val newsList by viewModel.newsHeadLines.collectAsState()
@@ -38,6 +45,7 @@ fun NewsScreen(
     Scaffold { paddingValues ->
         NewsList(
             modifier = Modifier.padding(paddingValues),
+            windowWidthSizeClass = windowWidthSizeClass,
             newsList = newsList
         )
     }
@@ -46,9 +54,19 @@ fun NewsScreen(
 @Composable
 fun NewsList(
     modifier: Modifier = Modifier,
+    windowWidthSizeClass: WindowWidthSizeClass,
     newsList: List<News>
 ) {
-    LazyColumn(modifier = modifier) {
+    val gridColumn = if(windowWidthSizeClass == WindowWidthSizeClass.Compact) {
+        GridCells.Fixed(1)
+    } else {
+        GridCells.Fixed(3)
+    }
+
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = gridColumn
+    ) {
         items(newsList) { news ->
             Row(modifier = Modifier.padding(10.dp)) {
                 AsyncImage(
@@ -83,5 +101,7 @@ fun NewsList(
 @Preview
 @Composable
 fun PreviewNewsScreen() {
-    NewsScreen()
+    NewsScreen(
+        WindowWidthSizeClass.Compact
+    )
 }
