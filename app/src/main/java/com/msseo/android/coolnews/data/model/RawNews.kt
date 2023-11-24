@@ -1,6 +1,5 @@
 package com.msseo.android.coolnews.data.model
 
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Locale
 
