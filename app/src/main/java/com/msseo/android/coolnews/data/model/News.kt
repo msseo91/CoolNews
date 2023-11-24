@@ -9,5 +9,6 @@ data class News(
     val description: String,
     val url: String,
     val urlToImage: String,
-    val publishedAt: Date
+    val publishedAt: Date,
+    val hasVisited: Boolean = false
 )

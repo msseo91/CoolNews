@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,5 +41,16 @@ class NewsViewModel @Inject constructor(
                 putExtra(NewsWebViewActivity.KEY_WEB_URL, news.url)
             }
         )
+
+        // Update visited state.
+        _newsHeadLines.update { newsList ->
+            newsList.map { oldNews ->
+                if(oldNews.url == news.url) {
+                    oldNews.copy(hasVisited = true)
+                } else {
+                    oldNews
+                }
+            }
+        }
     }
 }

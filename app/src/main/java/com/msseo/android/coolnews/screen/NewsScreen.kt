@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,6 +83,7 @@ fun NewsList(
                     Text(
                         text = news.title,
                         style = MaterialTheme.typography.titleMedium,
+                        color = if(news.hasVisited) Color.Red else Color.Unspecified
                     )
                     Text(
                         text = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(news.publishedAt),
