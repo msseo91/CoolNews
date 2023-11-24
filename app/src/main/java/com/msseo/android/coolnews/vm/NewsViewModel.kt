@@ -43,7 +43,7 @@ class NewsViewModel @Inject constructor(
         queryHeadline()
     }
 
-    fun queryHeadline() {
+    private fun queryHeadline() {
         viewModelScope.launch {
             newsRepository.queryHeadline().collect { result ->
                 when (result) {
