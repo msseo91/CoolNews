@@ -2,6 +2,7 @@ package com.msseo.android.coolnews.data.model
 
 import java.net.URL
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class RawNews(
     val title: String,
@@ -17,7 +18,7 @@ fun RawNews.asNews(): News =
         title = title,
         author = author,
         description = description,
-        url = URL(url),
-        urlToImage = URL(urlToImage),
-        publishedAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(publishedAt)
+        url = url,
+        urlToImage = urlToImage,
+        publishedAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(publishedAt)
     )
